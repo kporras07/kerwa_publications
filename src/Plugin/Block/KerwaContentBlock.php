@@ -7,6 +7,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Entity\EntityTypeManager;
 
 /**
  * Provides a kerwa content block.
@@ -27,6 +28,13 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
   protected $cache;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManager
+   */
+  protected $entityTypeManager;
+
+  /**
    * Constructs a new KerwaContentBlock instance.
    *
    * @param array $configuration
@@ -40,10 +48,13 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
    *   The plugin implementation definition.
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache
    *   The cache.
+   * @param \Drupal\Core\Entity\EntityTypeManager $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, CacheBackendInterface $cache) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, CacheBackendInterface $cache, EntityTypeManager $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->cache = $cache;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -54,7 +65,8 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('cache.default')
+      $container->get('cache.default'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -72,10 +84,16 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   public function blockForm($form, FormStateInterface $form_state) {
+    $items = $this->entityTypeManager->getStorage('kerwa_option')->loadMultiple();
+    $options = [];
+    foreach ($items as $item) {
+      $options[$item->id()] = $item->label();
+    }
     $form['kerwa_option'] = [
-      '#type' => 'textfield',
+      '#type' => 'select',
       '#title' => $this->t('Kerwa Key'),
-      '#default_value' => $this->configuration['kerwa_key'],
+      '#default_value' => $this->configuration['kerwa_option'],
+      '#options' => $options,
       '#required' => TRUE,
     ];
     $form['items_per_page'] = [
@@ -92,10 +110,8 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
-    $this->configuration['kerwa_key'] = $form_state->getValue('kerwa_key');
-    $this->configuration['items_per_page'] = $form_state->getValue('kerwa_key');
-    // @TODO: Save in config? So that can be accessed outside the block context to manipulate cache?
-    // Maybe create config instances (like flexslider or similar?) and block config should only select existing configs?
+    $this->configuration['kerwa_option'] = $form_state->getValue('kerwa_option');
+    $this->configuration['items_per_page'] = $form_state->getValue('items_per_page');
   }
 
   /**
