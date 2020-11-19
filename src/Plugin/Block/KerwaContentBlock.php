@@ -118,8 +118,13 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   public function build() {
+    $option = $this->entityTypeManager->getStorage('kerwa_option')->load($this->configuration['kerwa_option']);
     $build['content'] = [
-      '#markup' => $this->t('It works!'),
+      '#markup' => $this->t('OPTION: @option. Name: @name. ITEMS: @items', [
+        '@option' => $option->id(),
+        '@name' => $option->label(),
+        '@items' => $this->configuration['items_per_page'],
+      ]),
     ];
     return $build;
   }
