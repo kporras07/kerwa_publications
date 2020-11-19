@@ -144,36 +144,12 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
       $rows = [];
       foreach ($data as $item) {
         $row = [];
-        if (isset($item['title'])) {
-          $row['title'] = $item['title'];
-        }
-        else {
-          $row['title'] = '';
-        }
-        if (isset($item['author'])) {
-          $row['author'] = implode('; ', $item['creator']);
-        }
-        else {
-          $item['author'] = '';
-        }
-        if (isset($item['date'])) {
-          $row['date'] = $item['date'];
-        }
-        else {
-          $row['date'] = '';
-        }
-        if (isset($item['type'])) {
-          $row['type'] = implode(', ', $item['type']);
-        }
-        else {
-          $row['type'] = '';
-        }
-        if (isset($item['uri'])) {
-          $row['link'] = $item['uri'];
-        }
-        else {
-          $row['link'] = '';
-        }
+        // @TODO: Use isset or ensure it's always set.
+        $row['title'] = $item['title'] ?? '';
+        $row['creator'] = $item['creator'] ? implode('; ', $item['creator']) : '';
+        $row['date'] = $item['date'] ?? '';
+        $row['type'] = $item['type'] ? implode('; ', $item['type']) : '';
+        $row['uri'] = $item['uri'] ?? '';
         $rows[] = $row;
       }
       $build['table'] = [
