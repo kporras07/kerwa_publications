@@ -68,7 +68,7 @@ class KerwaPublicationsCache {
         if ($item_value->key === 'dc.date.issued') {
           $publication['date'] = $item_value->value;
         }
-        if ($item_value->key === 'dc.identifier.uri ') {
+        if ($item_value->key === 'dc.identifier.uri') {
           $publication['uri'] = $item_value->value;
         }
         $publications[] = $publication;

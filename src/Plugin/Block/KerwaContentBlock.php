@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\kerwa_publications\KerwaPublicationsCache;
 
 /**
  * Provides a kerwa content block.
@@ -35,6 +36,13 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
   protected $entityTypeManager;
 
   /**
+   * The Kerwa publications cache manager.
+   *
+   * @var \Drupal\kerwa_publications\KerwaPublicationsCache
+   */
+  protected $kerwaPublicationsCache;
+
+  /**
    * Constructs a new KerwaContentBlock instance.
    *
    * @param array $configuration
@@ -50,11 +58,14 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
    *   The cache.
    * @param \Drupal\Core\Entity\EntityTypeManager $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\kerwa_publications\KerwaPublicationsCache $kerwa_publications_cache
+   *   The Kerwa publications cache manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, CacheBackendInterface $cache, EntityTypeManager $entity_type_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, CacheBackendInterface $cache, EntityTypeManager $entity_type_manager, KerwaPublicationsCache $kerwa_publications_cache) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->cache = $cache;
     $this->entityTypeManager = $entity_type_manager;
+    $this->kerwaPublicationsCache = $kerwa_publications_cache;
   }
 
   /**
@@ -66,7 +77,8 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
       $plugin_id,
       $plugin_definition,
       $container->get('cache.default'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('kerwa_publications.cache')
     );
   }
 
@@ -118,8 +130,61 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   public function build() {
+    $build = [];
     $option = $this->entityTypeManager->getStorage('kerwa_option')->load($this->configuration['kerwa_option']);
-    $build['content'] = [
+    $data = $this->kerwaPublicationsCache->getCachedData($option);
+    if ($data) {
+      $headers = [
+        'Título',
+        'Autor(es)',
+        'Fecha',
+        'Tipo de Publicación',
+        'Enlace',
+      ];
+      $rows = [];
+      foreach ($data as $item) {
+        $row = [];
+        if (isset($item['title'])) {
+          $row['title'] = $item['title'];
+        }
+        else {
+          $row['title'] = '';
+        }
+        if (isset($item['author'])) {
+          $row['author'] = implode('; ', $item['creator']);
+        }
+        else {
+          $item['author'] = '';
+        }
+        if (isset($item['date'])) {
+          $row['date'] = $item['date'];
+        }
+        else {
+          $row['date'] = '';
+        }
+        if (isset($item['type'])) {
+          $row['type'] = implode(', ', $item['type']);
+        }
+        else {
+          $row['type'] = '';
+        }
+        if (isset($item['uri'])) {
+          $row['link'] = $item['uri'];
+        }
+        else {
+          $row['link'] = '';
+        }
+        $rows[] = $row;
+      }
+      $build['table'] = [
+        '#type' => 'table',
+        '#caption' => $this->t('Publicaciones'),
+        '#header' => $headers,
+        '#attributes' => [],
+        '#rows' => $rows,
+      ];
+    }
+    $build['text'] = [
       '#markup' => $this->t('OPTION: @option. Name: @name. ITEMS: @items', [
         '@option' => $option->id(),
         '@name' => $option->label(),
