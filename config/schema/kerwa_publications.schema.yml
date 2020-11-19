@@ -1,0 +1,18 @@
+kerwa_publications.kerwa_option.*:
+  type: config_entity
+  label: kerwa_option
+  mapping:
+    id:
+      type: string
+      label: ID
+    label:
+      type: label
+      label: Label
+    uuid:
+      type: string
+    key:
+      type: string
+    value:
+      type: string
+    language:
+      type: string

@@ -1,0 +1,5 @@
+entity.kerwa_option.add_form:
+  route_name: 'entity.kerwa_option.add_form'
+  title: 'Add Kerwa Option'
+  appears_on:
+    - entity.kerwa_option.collection

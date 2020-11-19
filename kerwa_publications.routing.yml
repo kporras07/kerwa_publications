@@ -1,0 +1,31 @@
+entity.kerwa_option.collection:
+  path: '/admin/config/services/kerwa-option'
+  defaults:
+    _entity_list: 'kerwa_option'
+    _title: 'Kerwa Option configuration'
+  requirements:
+    _permission: 'administer kerwa_option'
+
+entity.kerwa_option.add_form:
+  path: '/admin/config/services/kerwa-option/add'
+  defaults:
+    _entity_form: 'kerwa_option.add'
+    _title: 'Add a Kerwa Option'
+  requirements:
+    _permission: 'administer kerwa_option'
+
+entity.kerwa_option.edit_form:
+  path: '/admin/config/services/kerwa-option/{kerwa_option}'
+  defaults:
+    _entity_form: 'kerwa_option.edit'
+    _title: 'Edit a Kerwa Option'
+  requirements:
+    _permission: 'administer kerwa_option'
+
+entity.kerwa_option.delete_form:
+  path: '/admin/config/services/kerwa-option/{kerwa_option}/delete'
+  defaults:
+    _entity_form: 'kerwa_option.delete'
+    _title: 'Delete a Kerwa Option'
+  requirements:
+    _permission: 'administer kerwa_option'

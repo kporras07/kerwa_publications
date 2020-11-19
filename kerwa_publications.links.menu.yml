@@ -1,0 +1,5 @@
+entity.kerwa_option.overview:
+  title: kerwa_options
+  parent: system.admin_structure
+  description: 'List of Kerwa Options.'
+  route_name: entity.kerwa_option.collection
