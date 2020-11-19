@@ -1,3 +1,3 @@
 services:
-  kerwa_publications.cache_refresher:
-    class: Drupal\kerwa_publications\KerwaPublicationsCacheRefresher
+  kerwa_publications.cache:
+    class: Drupal\kerwa_publications\KerwaPublicationsCache

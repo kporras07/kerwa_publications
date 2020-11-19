@@ -6,10 +6,23 @@ namespace Drupal\kerwa_publications;
  * Kerwa Publications cache refresher.
  */
 
-class KerwaPublicationsCacheRefresher {
+class KerwaPublicationsCache {
 
   // @TODO: Document params.
   // @TODO: DI.
+
+  /**
+   * Get from cache or empty.
+   */
+  public function getCachedData($option) {
+    $cache = \Drupal::service('cache.default');
+    $cache_id = 'kerwa_publications_' . $option->id();
+    $data = $cache->get($cache_id);
+    if (!empty($data)) {
+      $data = $data->data;
+    }
+    return $data;
+  }
 
   /**
    * Refresh cache.

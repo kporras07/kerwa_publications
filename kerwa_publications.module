@@ -16,7 +16,7 @@ function kerwa_publications_cron() {
     $data = $cache->get($cache_id, FALSE);
     if (empty($data)) {
       // Get data to fill the cache.
-      \Drupal::service('kerwa_publications.cache_refresher')->refreshCache($option);
+      \Drupal::service('kerwa_publications.cache')->refreshCache($option);
     }
   }
 }
