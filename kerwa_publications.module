@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Module file for kerwa_publications.
+ */
+
+/**
+ * Implements hook_cron().
+ */
+function kerwa_publications_cron() {
+  $options = \Drupal::entityTypeManager()->getStorage('kerwa_option')->loadMultiple();
+  $cache = \Drupal::service('cache.default');
+  foreach ($options as $option) {
+    $cache_id = 'kerwa_publications_' . $option->id();
+    $data = $cache->get($cache_id, FALSE);
+    if (empty($data)) {
+      // Get data to fill the cache.
+      \Drupal::service('kerwa_publications.cache_refresher')->refreshCache($option);
+    }
+  }
+}
