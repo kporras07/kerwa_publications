@@ -3,6 +3,8 @@
 namespace Drupal\kerwa_publications;
 
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\kerwa_publications\Entity\KerwaOption;
+use GuzzleHttp\Client;
 
 /**
  * Kerwa Publications cache refresher.
@@ -10,16 +12,42 @@ use Drupal\Core\Cache\CacheBackendInterface;
 
 class KerwaPublicationsCache {
 
-  // @TODO: Document params.
-  // @TODO: DI.
+  /**
+   * Cache service.
+   *
+   * @var \Drupal\Core\Cache\CacheBackendInterface
+   */
+  protected $cache;
+
+  /**
+   * Http client.
+   *
+   * @var \GuzzleHttp\Client
+   */
+  protected $httpClient;
+
+  /**
+   * Construct.
+   *
+   * @param \Drupal\Core\Cache\CacheBackendInterface
+   *   The cache service.
+   * @param \GuzzleHttp\Client
+   *   The http client.
+   */
+  public function __construct(CacheBackendInterface $cache, Client $http_client) {
+    $this->cache = $cache;
+    $this->httpClient = $http_client;
+  }
 
   /**
    * Get from cache or empty.
+   *
+   * @param \Drupal\kerwa_publications\Entity\KerwaOption $option
+   *   Kerwa option entity.
    */
-  public function getCachedData($option) {
-    $cache = \Drupal::service('cache.kerwa_publications');
+  public function getCachedData(KerwaOption $option) {
     $cache_id = 'kerwa_publications_' . $option->id();
-    $data = $cache->get($cache_id);
+    $data = $this->cache->get($cache_id);
     if (!empty($data)) {
       $data = $data->data;
     }
@@ -28,17 +56,18 @@ class KerwaPublicationsCache {
 
   /**
    * Refresh cache.
+   *
+   * @param \Drupal\kerwa_publications\Entity\KerwaOption $option
+   *   Kerwa option entity.
    */
-  public function refreshCache($option) {
-    $cache = \Drupal::service('cache.kerwa_publications');
-    $client = \Drupal::httpClient();
+  public function refreshCache(KerwaOption $option) {
     $cache_id = 'kerwa_publications_' . $option->id();
     $data = [
       'key' => $option->getKey(),
       'value' => $option->getValue(),
       'language' => $option->getLanguage(),
     ];
-    $request = $client->post('https://kerwa.ucr.ac.cr:8443/rest/items/find-by-metadata-field', [
+    $request = $this->httpClient->post('https://kerwa.ucr.ac.cr:8443/rest/items/find-by-metadata-field', [
       'json' => $data,
       'verify' => FALSE,
     ]);
@@ -47,7 +76,7 @@ class KerwaPublicationsCache {
     foreach ($items as $item) {
       $publication = [];
       $url = 'https://kerwa.ucr.ac.cr:8443' . $item->link . '/metadata';
-      $item_request = $client->get($url, [
+      $item_request = $this->httpClient->get($url, [
         'verify' => FALSE,
       ]);
       $publication_item = json_decode($item_request->getBody());
@@ -76,6 +105,6 @@ class KerwaPublicationsCache {
         $publications[] = $publication;
       }
     }
-    $cache->set($cache_id, $publications, CacheBackendInterface::CACHE_PERMANENT);
+    $this->cache->set($cache_id, $publications, CacheBackendInterface::CACHE_PERMANENT);
   }
 }

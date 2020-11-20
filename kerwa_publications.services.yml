@@ -1,6 +1,7 @@
 services:
   kerwa_publications.cache:
     class: Drupal\kerwa_publications\KerwaPublicationsCache
+    arguments: ['@cache.kerwa_publications', '@http_client']
   cache.kerwa_publications:
     class: Drupal\Core\Cache\CacheBackendInterface
     tags:
