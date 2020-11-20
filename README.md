@@ -3,6 +3,10 @@ Kerwa Publications
 
 Este módulo provee un plugin de Block para desplegar la información de publicaciones de Kerwá basado en un key y su correspondiente valor.
 
+# Screenshot
+
+![Pantallazo de la tabla generada por el módulo Kerwa Publications](./img/screenshot.png)
+
 # ¿Cómo usarlo?
 
 Vaya a /admin/config/services/kerwa-option y agregue un nuevo Kerwa Option con los siguientes valores:
