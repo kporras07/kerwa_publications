@@ -9,6 +9,8 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\kerwa_publications\KerwaPublicationsCache;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 
 /**
  * Provides a kerwa content block.
@@ -154,10 +156,10 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
       foreach ($data as $item) {
         $row = [];
         $row['title'] = isset($item['title']) ? $item['title'] : '';
-        $row['creator'] = isset($item['creator']) ? implode('; ', $item['creator']) : '';
+        $row['creator'] = isset($item['creator']) ? implode('/', $item['creator']) : '';
         $row['date'] = isset($item['date']) ? $item['date'] : '';
         $row['type'] = isset($item['type']) ? implode('; ', $item['type']) : '';
-        $row['uri'] = isset($item['uri']) ? $item['uri'] : '';
+        $row['uri'] = isset($item['uri']) ? Link::fromTextAndUrl($this->t('View Full Article'), Url::fromUri($item['uri'])) : '';
         $rows[] = $row;
       }
 

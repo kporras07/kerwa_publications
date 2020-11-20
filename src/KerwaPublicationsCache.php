@@ -102,8 +102,8 @@ class KerwaPublicationsCache {
         if ($item_value->key === 'dc.identifier.uri') {
           $publication['uri'] = $item_value->value;
         }
-        $publications[] = $publication;
       }
+      $publications[] = $publication;
     }
     $this->cache->set($cache_id, $publications, CacheBackendInterface::CACHE_PERMANENT);
   }
