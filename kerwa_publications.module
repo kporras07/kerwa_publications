@@ -9,14 +9,29 @@
  * Implements hook_cron().
  */
 function kerwa_publications_cron() {
-  $options = \Drupal::entityTypeManager()->getStorage('kerwa_option')->loadMultiple();
-  $cache = \Drupal::service('cache.default');
-  foreach ($options as $option) {
-    $cache_id = 'kerwa_publications_' . $option->id();
-    $data = $cache->get($cache_id, FALSE);
-    if (empty($data)) {
-      // Get data to fill the cache.
-      \Drupal::service('kerwa_publications.cache')->refreshCache($option);
-    }
+  $kerwa_last_refreshed = \Drupal::state()->get('kerwa_publications_last_refreshed', 0);
+  $current_time = \Drupal::time()->getCurrentTime();
+  if (($kerwa_last_refreshed + 86400) > $current_time) {
+    // If refreshed less than 24h ago, do nothing.
+    return;
   }
+  $options = \Drupal::entityTypeManager()->getStorage('kerwa_option')->loadMultiple();
+  foreach ($options as $option) {
+    // Get data to fill the cache.
+    \Drupal::service('kerwa_publications.cache')->refreshCache($option);
+  }
+  \Drupal::state()->set('kerwa_publications_last_refreshed', $current_time);
+}
+
+/**
+ * Implements hook_rebuild().
+ */
+function kerwa_publications_rebuild() {
+  $current_time = \Drupal::time()->getCurrentTime();
+  $options = \Drupal::entityTypeManager()->getStorage('kerwa_option')->loadMultiple();
+  foreach ($options as $option) {
+    // Get data to fill the cache.
+    \Drupal::service('kerwa_publications.cache')->refreshCache($option);
+  }
+  \Drupal::state()->set('kerwa_publications_last_refreshed', $current_time);
 }
