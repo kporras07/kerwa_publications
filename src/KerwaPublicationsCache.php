@@ -2,6 +2,8 @@
 
 namespace Drupal\kerwa_publications;
 
+use Drupal\Core\Cache\CacheBackendInterface;
+
 /**
  * Kerwa Publications cache refresher.
  */
@@ -15,7 +17,7 @@ class KerwaPublicationsCache {
    * Get from cache or empty.
    */
   public function getCachedData($option) {
-    $cache = \Drupal::service('cache.default');
+    $cache = \Drupal::service('cache.kerwa_publications');
     $cache_id = 'kerwa_publications_' . $option->id();
     $data = $cache->get($cache_id);
     if (!empty($data)) {
@@ -28,7 +30,7 @@ class KerwaPublicationsCache {
    * Refresh cache.
    */
   public function refreshCache($option) {
-    $cache = \Drupal::service('cache.default');
+    $cache = \Drupal::service('cache.kerwa_publications');
     $client = \Drupal::httpClient();
     $cache_id = 'kerwa_publications_' . $option->id();
     $data = [
@@ -74,6 +76,6 @@ class KerwaPublicationsCache {
         $publications[] = $publication;
       }
     }
-    $cache->set($cache_id, $publications, \Drupal::time()->getCurrentTime() + 86400);
+    $cache->set($cache_id, $publications, CacheBackendInterface::CACHE_PERMANENT);
   }
 }

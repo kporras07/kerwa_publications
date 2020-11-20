@@ -144,12 +144,11 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
       $rows = [];
       foreach ($data as $item) {
         $row = [];
-        // @TODO: Use isset or ensure it's always set.
-        $row['title'] = $item['title'] ?? '';
-        $row['creator'] = $item['creator'] ? implode('; ', $item['creator']) : '';
-        $row['date'] = $item['date'] ?? '';
-        $row['type'] = $item['type'] ? implode('; ', $item['type']) : '';
-        $row['uri'] = $item['uri'] ?? '';
+        $row['title'] = isset($item['title']) ? $item['title'] : '';
+        $row['creator'] = isset($item['creator']) ? implode('; ', $item['creator']) : '';
+        $row['date'] = isset($item['date']) ? $item['date'] : '';
+        $row['type'] = isset($item['type']) ? implode('; ', $item['type']) : '';
+        $row['uri'] = isset($item['uri']) ? $item['uri'] : '';
         $rows[] = $row;
       }
       $build['table'] = [
@@ -160,13 +159,7 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
         '#rows' => $rows,
       ];
     }
-    $build['text'] = [
-      '#markup' => $this->t('OPTION: @option. Name: @name. ITEMS: @items', [
-        '@option' => $option->id(),
-        '@name' => $option->label(),
-        '@items' => $this->configuration['items_per_page'],
-      ]),
-    ];
+
     return $build;
   }
 

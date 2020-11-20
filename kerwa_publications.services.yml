@@ -1,3 +1,9 @@
 services:
   kerwa_publications.cache:
     class: Drupal\kerwa_publications\KerwaPublicationsCache
+  cache.kerwa_publications:
+    class: Drupal\Core\Cache\CacheBackendInterface
+    tags:
+      - { name: cache.bin }
+    factory: cache_factory:get
+    arguments: [kerwa_publications]
