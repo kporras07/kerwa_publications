@@ -142,6 +142,15 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
         'Enlace',
       ];
       $rows = [];
+
+      $page = pager_find_page();
+      $num_per_page = $this->configuration['items_per_page'];
+      if ($num_per_page) {
+        $total_items = count($data);
+        $offset = $num_per_page * $page;
+        $data = array_slice($data, $offset, $num_per_page);
+        pager_default_initialize($total_items, $num_per_page);
+      }
       foreach ($data as $item) {
         $row = [];
         $row['title'] = isset($item['title']) ? $item['title'] : '';
@@ -151,6 +160,7 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
         $row['uri'] = isset($item['uri']) ? $item['uri'] : '';
         $rows[] = $row;
       }
+
       $build['table'] = [
         '#type' => 'table',
         '#caption' => $this->t('Publicaciones'),
@@ -158,6 +168,12 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
         '#attributes' => [],
         '#rows' => $rows,
       ];
+
+      if ($num_per_page) {
+        $build['pager'] = [
+          '#type' => 'pager',
+        ];
+      }
     }
 
     return $build;
