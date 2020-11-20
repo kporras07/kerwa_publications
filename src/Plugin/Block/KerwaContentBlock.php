@@ -159,7 +159,7 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
         $row['creator'] = isset($item['creator']) ? implode('/', $item['creator']) : '';
         $row['date'] = isset($item['date']) ? $item['date'] : '';
         $row['type'] = isset($item['type']) ? implode('; ', $item['type']) : '';
-        $row['uri'] = isset($item['uri']) ? Link::fromTextAndUrl($this->t('View Full Article'), Url::fromUri($item['uri'])) : '';
+        $row['uri'] = isset($item['uri']) ? Link::fromTextAndUrl($this->t('Ver Artículo Completo'), Url::fromUri($item['uri'])) : '';
         $rows[] = $row;
       }
 
