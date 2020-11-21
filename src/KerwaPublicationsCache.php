@@ -108,6 +108,19 @@ class KerwaPublicationsCache {
       }
       $publications[] = $publication;
     }
+    usort($publications, function($a, $b) {
+      $time_a = 0;
+      $time_b = 0;
+      if (isset($a['date'])) {
+        $date_a = $a['date'];
+        $time_a = strtotime($date_a);
+      }
+      if (isset($b['date'])) {
+        $date_b = $b['date'];
+        $time_b = strtotime($date_b);
+      }
+      return $time_a < $time_b;
+    });
     $this->cache->set($cache_id, $publications, CacheBackendInterface::CACHE_PERMANENT);
   }
 
