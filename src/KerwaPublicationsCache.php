@@ -97,7 +97,7 @@ class KerwaPublicationsCache {
           if (!isset($publication['type'])) {
             $publication['type'] = [];
           }
-          $publication['type'][] = $item_value->value;
+          $publication['type'][] = $this->mapType($item_value->value);
         }
         if ($item_value->key === 'dc.date.issued') {
           $publication['date'] = $item_value->value;
@@ -109,5 +109,39 @@ class KerwaPublicationsCache {
       $publications[] = $publication;
     }
     $this->cache->set($cache_id, $publications, CacheBackendInterface::CACHE_PERMANENT);
+  }
+
+  /**
+   * Map type parameter.
+   */
+  protected function mapType($type) {
+    $type_label = '';
+
+    switch ($type) {
+      case 'info:eu-repo/semantics/masterThesis':
+        $type_label = 'Tesis';
+        break;
+
+      case 'info:eu-repo/semantics/article':
+        $type_label = 'Artículo';
+        break;
+
+      case 'info:eu-repo/semantics/conferenceObject':
+        $type_label = 'Contribución a congreso';
+        break;
+
+      case 'info:eu-repo/semantics/contributionToPeriodical';
+        $type_label = 'Contribución';
+        break;
+
+      case 'info:eu-repo/semantics/other':
+        $type_label = 'Otro';
+        break;
+
+      default:
+        $type_label = $type;
+    }
+
+    return $type_label;
   }
 }
