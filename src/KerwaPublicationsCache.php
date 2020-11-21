@@ -82,6 +82,9 @@ class KerwaPublicationsCache {
       $publication_item = json_decode($item_request->getBody());
       foreach ($publication_item as $item_value) {
         if ($item_value->key === 'dc.title') {
+          if (!empty($publication['title']) && $item_value->language === 'en') {
+            continue;
+          }
           $publication['title'] = $item_value->value;
         }
         if ($item_value->key === 'dc.creator') {
