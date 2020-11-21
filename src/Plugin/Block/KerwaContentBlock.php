@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\kerwa_publications\KerwaPublicationsCache;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\Core\Render\Markup;
 
 /**
  * Provides a kerwa content block.
@@ -158,8 +159,13 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
         $row['title'] = isset($item['title']) ? $item['title'] : '';
         $row['creator'] = isset($item['creator']) ? implode('/', $item['creator']) : '';
         $row['date'] = isset($item['date']) ? $item['date'] : '';
-        $row['type'] = isset($item['type']) ? implode('; ', $item['type']) : '';
-        $row['uri'] = isset($item['uri']) ? Link::fromTextAndUrl($this->t('Ver Artículo Completo'), Url::fromUri($item['uri'])) : '';
+        if (isset($item['type'])) {
+          $row['type'] = Markup::create(implode("<br/>", $item['type']));
+        }
+        else {
+          $row['type'] = '';
+        }
+        $row['uri'] = isset($item['uri']) ? Link::fromTextAndUrl($this->t('Ver Publicación'), Url::fromUri($item['uri'])) : '';
         $rows[] = $row;
       }
 
