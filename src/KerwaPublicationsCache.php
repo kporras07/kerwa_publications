@@ -147,6 +147,10 @@ class KerwaPublicationsCache {
         $type_label = 'Contribución';
         break;
 
+      case 'info:eu-repo/semantics/publishedVersion':
+        $type_label = 'Artículo publicado';
+        break;
+
       case 'info:eu-repo/semantics/other':
         $type_label = 'Otro';
         break;
