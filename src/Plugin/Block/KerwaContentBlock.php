@@ -157,7 +157,7 @@ class KerwaContentBlock extends BlockBase implements ContainerFactoryPluginInter
       foreach ($data as $item) {
         $row = [];
         $row['title'] = isset($item['title']) ? $item['title'] : '';
-        $row['creator'] = isset($item['creator']) ? implode('/', $item['creator']) : '';
+        $row['creator'] = isset($item['creator']) ? implode('; ', $item['creator']) : '';
         $row['date'] = isset($item['date']) ? $item['date'] : '';
         if (isset($item['type'])) {
           $row['type'] = Markup::create(implode("<br/>", $item['type']));
