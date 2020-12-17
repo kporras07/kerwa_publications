@@ -164,6 +164,10 @@ class KerwaPublicationsCache {
       case 'info:eu-repo/semantics/other':
         $type_label = 'Otro';
         break;
+        
+      case 'info:eu-repo/semantics/bookPart':
+        $type_label = 'Apartado de libro';
+        break
 
       default:
         $type_label = $type;
